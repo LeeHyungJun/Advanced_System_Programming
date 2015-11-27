@@ -1,3 +1,11 @@
+/*
+        Advanced System Programming
+        Linux / Unix
+        My_command set
+        Kookmin UNIV. seoul, South Korea.
+        20113315 이형준, hyungjun lee
+        hjlee1765@gmail.com
+*/
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -27,7 +35,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Usage: %s <files>...\n", argv[0]);
 		return 0;
  	}
-
+	//option detect
 	for(i=j=1; i<argc; i++) {
                 if(argv[i][0]=='-'){
                         if(argv[i][1] == 'f')
@@ -36,21 +44,22 @@ int main(int argc, char *argv[]) {
 				option_i=true;
                 }
         }
+	 // -i option
+        if(option_i){
+                for(i=1; i<argc; i++){
+                        if(argv[i][0] == '-')
+                                continue;
+                        rmProcess(i,argc,argv,'i');
+                }
+        }
 
-	if(option_i && option_f){
-	}
-	else if(option_f || (!option_i || !option_f)){
+	// "-f option" and "no option"
+	//because empty option equal -f option.
+	else if(option_f){
 		for(i=1; i<argc; i++){
 			if(argv[i][0] == '-')
                                 continue;
                         rmProcess(i,argc,argv,'f');
-		}
-	}
-	else if(option_i){
-		for(i=1; i<argc; i++){
-                        if(argv[i][0] == '-')
-                                continue;
-                        rmProcess(i,argc,argv,'i');
 		}
 	}
 }
@@ -61,6 +70,7 @@ int rmProcess(int i, int argc, char *argv[], int option ){
 	char buffer[BUFSIZE];
 	int yesOrNo='y';
 
+                 //distinguish file and directory
                 memset(&stat_buf,0,sizeof(struct stat));
                 stat(argv[i],&stat_buf);
                 if(S_ISDIR(stat_buf.st_mode)){
@@ -68,10 +78,13 @@ int rmProcess(int i, int argc, char *argv[], int option ){
                         fprintf(stderr,"cannot remove '%s' : is a directory\n",argv[i]);
                         return 0;
                 }
-		//printf("  %d  ",option);
+
 		if(option=='i'){
-		printf("rm: remove regular file '%s'", argv[i]);
+		printf("rm: remove regular file '%s'? ", argv[i]);
 			scanf("%c",&yesOrNo);
+			//fpurge equal fflush.
+			//gcc did not  provide fflush.
+			//that's why i used the fpurge.
 			__fpurge(stdin);
 		}
 

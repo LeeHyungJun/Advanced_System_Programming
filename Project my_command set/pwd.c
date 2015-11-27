@@ -15,7 +15,7 @@
 int main(int argc, char* argv[])
 {
 	char buf[BUFSIZ];
-
+	//get current working directory
 	getcwd(buf,BUFSIZ);
 
 	printf("%s\n",buf);
