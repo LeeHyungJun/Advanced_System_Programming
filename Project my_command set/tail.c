@@ -11,6 +11,8 @@
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/types.h>
 
 #define buf 128
 
@@ -56,10 +58,21 @@ int main(int argc, char* argv[])
 void head(int nValue, int argc, char* argv[]){
 	int i,n;
 	int lineCnt=0;
+	struct stat stat_buf;
 	FILE* fp;
 	char str[buf];
 	n=nValue;
 	for(i=1; i<argc; i++){
+		 //dir detect
+                if(!(argv[i][0]=='-')){
+                        stat(argv[i],&stat_buf);
+                        if(S_ISDIR(stat_buf.st_mode)){
+                                fprintf(stderr,"head: error reading '%s' :  is a directory\n",argv[i]);
+                                exit(1);
+                        }
+                }
+
+
 		//muti parameter print process
 		//no -n option
 		if(n==10){
